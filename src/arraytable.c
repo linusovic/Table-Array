@@ -17,10 +17,12 @@ typedef struct table {
 	free_function key_free_func;
 	free_function value_free_func;
     int HowBigIsTheArray;
-
 } table;
 
-
+typedef struct table_entry {
+	void *key;
+	void *value;
+} table_entry;
 
 /* Creates a table.
  *  compare_function - Pointer to a function that is called for comparing
@@ -53,12 +55,9 @@ table *table_empty(compare_function *key_cmp_func,
 bool table_is_empty(const table *t)
 {
 	table *t1 = (table*)t;
-	printf("t1->HowBigIsTheArray = %d\n", t1->HowBigIsTheArray);
 	if(t1->HowBigIsTheArray == 0){
-		printf("True\n");
 		return true;
 	}
-	printf("false\n");
 	return false;
 }
 
@@ -78,22 +77,44 @@ bool table_is_empty(const table *t)
 void table_insert(table *t, void *key, void *value)
 {
 	table *t1 = (table*)t;
-	int j = 0;
+	table_entry *entry = malloc(sizeof(table_entry));
+	table_entry *Insert = malloc(sizeof(table_entry));
+
+	//value i set value ska ersättas med table_entry.
+	entry->key = key;
+	entry->value = value;
+	int j = 0;	//Used as index.
+
+
 
 	//If table is empty just pick the first slot in it.
 	if(table_is_empty(t1) == true){
 		//insert first slot of the array.
-		array_1d_set_value(t1->entries,value,j);
+		array_1d_set_value(t1->entries,entry,j);
 	}
+
+	//Funkar kanske inte för att value inte är inmatat. hur ska den då
+	//då kunna see ett element som inte är inmatat.
+	entry = array_1d_inspect_value(t1->entries, j);	// Look at value
+
+
+
+
+	//v->value = value;
+	//v->key = key;
+
+
+	printf(" v-> value = %s\n", (char*)entry->value);
+	printf(" v-> key = %s\n", (char*)entry->key);
 
 	//Traverse through all values to see if key exist, then replace if it does.
 	while(array_1d_has_value(t1->entries,j)){
-		t1->entries->values = array_1d_inspect_value(t1->entries, j);	// Look at value
-		//Skriv ut t1->entries
-		//compare function key, med t1->entries->values
-		//if samma then mtf-isch
-		j++;	//Check next slot
+		Insert = array_1d_inspect_value(t1->entries, j);	// Look at value
+		if(entry->key == key){
+			array_1d_set_value(t1->entries,entry,j);
 		}
+		j++;	//Check next slot
+	}
 }
 
 /**

@@ -650,7 +650,7 @@ void test_remove_elements_same_keys()
 void correctnessTest()
 {
         test_isempty();
-      //  test_insert_single_element();
+        test_insert_single_element();
        // test_lookup_single_element();
        // test_insert_lookup_different_keys();
       //  test_insert_lookup_same_keys();
