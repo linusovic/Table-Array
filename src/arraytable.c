@@ -1,4 +1,4 @@
-//Written by Johan Eliasson <johane@cs.umu.se>.
+//Written by indexohan Eliasson <indexohane@cs.umu.se>.
 //May be used in the course Datastrukturer och Algoritmer (C) at Umeå University.
 //Usage exept those listed above requires permission by the author.
 #include <stdlib.h>
@@ -54,8 +54,8 @@ table *table_empty(compare_function *key_cmp_func,
  */
 bool table_is_empty(const table *t)
 {
-	table *t1 = (table*)t;
-	if(t1->HowBigIsTheArray == 0){
+	table *tablePointer = (table*)t;
+	if(tablePointer->HowBigIsTheArray == 0){
 		return true;
 	}
 	return false;
@@ -76,44 +76,45 @@ bool table_is_empty(const table *t)
  */
 void table_insert(table *t, void *key, void *value)
 {
-	table *t1 = (table*)t;
-	table_entry *entry = malloc(sizeof(table_entry));
-	table_entry *Insert = malloc(sizeof(table_entry));
+	table *tablePointer = (table*)t;
+	//Value who will changed through the array
+	table_entry *checkElement = malloc(sizeof(table_entry));
 
-	//value i set value ska ersättas med table_entry.
-	entry->key = key;
-	entry->value = value;
-	int j = 0;	//Used as index.
+	table_entry *insertElement = malloc(sizeof(table_entry));
+
+	//Values who will be inserted.
+	insertElement->key = key;
+	insertElement->value = value;
+
+	bool inserted = false;
+	int index = 0;	//Used as index.
 
 
 
-	//If table is empty just pick the first slot in it.
-	if(table_is_empty(t1) == true){
+	//If table is empty indexust pick the first slot in it.
+	if(table_is_empty(tablePointer) == true){
+		printf("STUFF\n\n\n");
 		//insert first slot of the array.
-		array_1d_set_value(t1->entries,entry,j);
+		array_1d_set_value(tablePointer->entries,insertElement,index);
+		int a = tablePointer->key_cmp_func(insertElement->key, key);
+		printf("a = %d\n", a);
+		inserted = true;					//Used to exit loop and function.
+		tablePointer->HowBigIsTheArray++;	//Update inserted slots of array.
 	}
 
-	//Funkar kanske inte för att value inte är inmatat. hur ska den då
-	//då kunna see ett element som inte är inmatat.
-	entry = array_1d_inspect_value(t1->entries, j);	// Look at value
-
-
-
-
-	//v->value = value;
-	//v->key = key;
-
-
-	printf(" v-> value = %s\n", (char*)entry->value);
-	printf(" v-> key = %s\n", (char*)entry->key);
-
 	//Traverse through all values to see if key exist, then replace if it does.
-	while(array_1d_has_value(t1->entries,j)){
-		Insert = array_1d_inspect_value(t1->entries, j);	// Look at value
-		if(entry->key == key){
-			array_1d_set_value(t1->entries,entry,j);
+	while(array_1d_has_value(tablePointer->entries,index) && inserted == false){
+		//Look att current slot of array
+		checkElement = array_1d_inspect_value(tablePointer->entries, index);
+		printf("(tablePointer->key_cmp_func(checkElement->key, key = %d\n\n\n\n\n\n", tablePointer->key_cmp_func(checkElement->key, key));
+		if(tablePointer->key_cmp_func(checkElement->key, key) == 0){	//See if key match
+
+			printf("key matched\n\n\n\n");
+			array_1d_set_value(tablePointer->entries,insertElement,index);
+			tablePointer->HowBigIsTheArray++;	//Update inserted slots of array.
+			inserted = true;		//Used to exit loop and function.
 		}
-		j++;	//Check next slot
+		index++;	//Check next index of array.
 	}
 }
 
@@ -128,7 +129,26 @@ void table_insert(table *t, void *key, void *value)
  */
 void *table_lookup(const table *t, const void *key)
 {
-
+	table_entry *checkElement = malloc(sizeof(table_entry));
+	table *tablePointer = (table*)t;
+	int index = 0;
+	printf("key looking for = %s\n", key);
+	//Traverse through all values to see if key exist, then replace if it does.
+	while(array_1d_has_value(tablePointer->entries,index)){
+		printf("traversing through everything to find key\n");
+		//Look att current slot of array
+		checkElement = array_1d_inspect_value(tablePointer->entries, index);
+		printf("checking array[%d] key is %s value is %s\n", index, checkElement->key, checkElement->value);
+		printf("key we want to match = %s\n", key);
+		if(checkElement->key == key){	//See if key match
+			printf("inside if key found\n");
+			printf("value returned = %s",checkElement->value );
+			printf(" from  %s\n",checkElement->key );
+			return checkElement->value;
+			break;
+		}
+		index++;	//Check next index of array.
+	}
 }
 
 /**
