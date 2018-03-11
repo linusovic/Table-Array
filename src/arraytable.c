@@ -16,7 +16,7 @@ typedef struct table {
 	compare_function *key_cmp_func;
 	free_function key_free_func;
 	free_function value_free_func;
-    int HowBigIsTheArray;
+    int freeIndex;
 } table;
 
 typedef struct table_entry {
@@ -41,7 +41,7 @@ table *table_empty(compare_function *key_cmp_func,
 	t->key_cmp_func = key_cmp_func;
 	t->key_free_func = key_free_func;
 	t->value_free_func = value_free_func;
-	t->HowBigIsTheArray = 0;
+	t->freeIndex = 0;
 	return t;
 }
 
@@ -55,7 +55,7 @@ table *table_empty(compare_function *key_cmp_func,
 bool table_is_empty(const table *t)
 {
 	table *tablePointer = (table*)t;
-	if(tablePointer->HowBigIsTheArray == 0){
+	if(tablePointer->freeIndex == 0){
 		return true;
 	}
 	return false;
@@ -86,35 +86,35 @@ void table_insert(table *t, void *key, void *value)
 	insertElement->key = key;
 	insertElement->value = value;
 
+
+
 	bool inserted = false;
 	int index = 0;	//Used as index.
-
-
-
 	//If table is empty indexust pick the first slot in it.
 	if(table_is_empty(tablePointer) == true){
-		printf("STUFF\n\n\n");
 		//insert first slot of the array.
-		array_1d_set_value(tablePointer->entries,insertElement,index);
-		int a = tablePointer->key_cmp_func(insertElement->key, key);
-		printf("a = %d\n", a);
+		array_1d_set_value(tablePointer->entries,insertElement,tablePointer->freeIndex);
 		inserted = true;					//Used to exit loop and function.
-		tablePointer->HowBigIsTheArray++;	//Update inserted slots of array.
+		tablePointer->freeIndex++;	//Update inserted slots of array.
 	}
 
 	//Traverse through all values to see if key exist, then replace if it does.
 	while(array_1d_has_value(tablePointer->entries,index) && inserted == false){
 		//Look att current slot of array
 		checkElement = array_1d_inspect_value(tablePointer->entries, index);
-		printf("(tablePointer->key_cmp_func(checkElement->key, key = %d\n\n\n\n\n\n", tablePointer->key_cmp_func(checkElement->key, key));
 		if(tablePointer->key_cmp_func(checkElement->key, key) == 0){	//See if key match
-
-			printf("key matched\n\n\n\n");
 			array_1d_set_value(tablePointer->entries,insertElement,index);
-			tablePointer->HowBigIsTheArray++;	//Update inserted slots of array.
+			tablePointer->freeIndex++;	//Update inserted slots of array.
 			inserted = true;		//Used to exit loop and function.
 		}
 		index++;	//Check next index of array.
+	}
+	//If Key do not exist put it to next available slot.
+
+
+	if(inserted == false){
+		array_1d_set_value(tablePointer->entries,insertElement,tablePointer->freeIndex);
+		tablePointer->freeIndex++;
 	}
 }
 
@@ -131,23 +131,19 @@ void *table_lookup(const table *t, const void *key)
 {
 	table_entry *checkElement = malloc(sizeof(table_entry));
 	table *tablePointer = (table*)t;
-	int index = 0;
-	printf("key looking for = %s\n", key);
+	int index = array_1d_low(t->entries);
 	//Traverse through all values to see if key exist, then replace if it does.
+	bool found = false;
 	while(array_1d_has_value(tablePointer->entries,index)){
-		printf("traversing through everything to find key\n");
 		//Look att current slot of array
 		checkElement = array_1d_inspect_value(tablePointer->entries, index);
-		printf("checking array[%d] key is %s value is %s\n", index, checkElement->key, checkElement->value);
-		printf("key we want to match = %s\n", key);
-		if(checkElement->key == key){	//See if key match
-			printf("inside if key found\n");
-			printf("value returned = %s",checkElement->value );
-			printf(" from  %s\n",checkElement->key );
+		//		checkElement->key == key //Implementera key-compare.
+		if(tablePointer->key_cmp_func(checkElement->key, key) == 0){	//Implementera key-compare.
+		//	printf("looked up element %s %s\n", checkElement->key, checkElement->value);
 			return checkElement->value;
-			break;
 		}
-		index++;	//Check next index of array.
+		printf("update index\n");
+		index++;
 	}
 }
 
@@ -164,7 +160,22 @@ void *table_lookup(const table *t, const void *key)
  */
 void table_remove(table *t, const void *key)
 {
+	table_entry *checkElement = malloc(sizeof(table_entry));
+	table *tablePointer = (table*)t;
+	int index = array_1d_low(t->entries);
+	//Traverse through all values to see if key exist, then replace if it does.
+	bool found = false;
+	while(array_1d_has_value(tablePointer->entries,index)){
+		//Look att current slot of array
+		checkElement = array_1d_inspect_value(tablePointer->entries, index);
+		//		checkElement->key == key //Implementera key-compare.
+		if(tablePointer->key_cmp_func(checkElement->key, key) == 0){	//Implementera key-compare.
+			//Remove element in array
 
+		}
+		printf("update index\n");
+		index++;
+	}
 }
 
 /*
