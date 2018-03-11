@@ -24,6 +24,8 @@ typedef struct table_entry {
 	void *value;
 } table_entry;
 
+
+
 /* Creates a table.
  *  compare_function - Pointer to a function that is called for comparing
  *                     two keys. The function should return <0 if the left
@@ -76,6 +78,7 @@ bool table_is_empty(const table *t)
  */
 void table_insert(table *t, void *key, void *value)
 {
+
 	table *tablePointer = (table*)t;
 	//Value who will changed through the array
 	table_entry *checkElement = malloc(sizeof(table_entry));
@@ -85,7 +88,6 @@ void table_insert(table *t, void *key, void *value)
 	//Values who will be inserted.
 	insertElement->key = key;
 	insertElement->value = value;
-
 
 
 	bool inserted = false;
@@ -142,7 +144,6 @@ void *table_lookup(const table *t, const void *key)
 		//	printf("looked up element %s %s\n", checkElement->key, checkElement->value);
 			return checkElement->value;
 		}
-		printf("update index\n");
 		index++;
 	}
 }
@@ -160,21 +161,55 @@ void *table_lookup(const table *t, const void *key)
  */
 void table_remove(table *t, const void *key)
 {
+	/*
+	 		// Compare the supplied key with the key of this entry.
+		if (t->key_cmp_func(entry->key, key) == 0) {
+			// If we have a match, call free on the key
+			// and/or value if given the responsiblity
+			if (t->key_free_func != NULL) {
+				t->key_free_func(entry->key);
+			}
+			if (t->value_free_func != NULL) {
+				t->value_free_func(entry->value);
+			}
+			// Remove the list element itself.
+			pos = dlist_remove(t->entries, pos);
+	 */
+
+	//Traverse to find key, if key find, remove it.
+	//Maybe it is not freed, might need to check valgrind about that.
+
+	//After element has been removed, take the last element of array
+	//(if there is one) and move it to the slot the removed element used to be).
+
 	table_entry *checkElement = malloc(sizeof(table_entry));
 	table *tablePointer = (table*)t;
 	int index = array_1d_low(t->entries);
+	int removedindex;
 	//Traverse through all values to see if key exist, then replace if it does.
-	bool found = false;
+	bool removed = false;
 	while(array_1d_has_value(tablePointer->entries,index)){
 		//Look att current slot of array
 		checkElement = array_1d_inspect_value(tablePointer->entries, index);
 		//		checkElement->key == key //Implementera key-compare.
 		if(tablePointer->key_cmp_func(checkElement->key, key) == 0){	//Implementera key-compare.
-			//Remove element in array
-
+			printf("Remove Match Key %s\n", key);
+			if (t->key_free_func != NULL) {
+				t->key_free_func(checkElement->key);
+			}
+			if (t->value_free_func != NULL) {
+				t->value_free_func(checkElement->value);
+			}
+			array_1d_set_value(tablePointer->entries,NULL,index);
+			removed = true;
 		}
-		printf("update index\n");
 		index++;
+	}
+	if(removed){
+		printf("removed is true\n");
+		checkElement = array_1d_inspect_value(tablePointer->entries, tablePointer->freeIndex-1);
+		array_1d_set_value(tablePointer->entries,checkElement,removedindex);
+		tablePointer->freeIndex--;
 	}
 }
 
