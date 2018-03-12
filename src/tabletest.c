@@ -62,7 +62,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
-#include <table.h>
+#include "table.h"
 
 // Maximum size of the table to generate
 #define TABLESIZE 40000
@@ -359,6 +359,7 @@ void test_lookup_existing_key(table *t, char *key, char *value)
 {
         char *return_value = (char *)table_lookup(t, key);
         if (return_value==NULL){
+        		printf("cannot find %s %s\n", key, value);
                 printf("Looked up an existing key, table claims it does "
                        "not exist.\n");
                 exit(EXIT_FAILURE);
@@ -649,14 +650,14 @@ void test_remove_elements_same_keys()
  */
 void correctnessTest()
 {
-        test_isempty();
-        test_insert_single_element();
-        test_lookup_single_element();
-        test_insert_lookup_different_keys();
-        test_insert_lookup_same_keys();
-        test_remove_single_element();
-        test_remove_elements_different_keys();
-       // test_remove_elements_same_keys();
+       // test_isempty();
+       // test_insert_single_element();
+        //test_lookup_single_element();
+       // test_insert_lookup_different_keys();
+       // test_insert_lookup_same_keys();
+       // test_remove_single_element();
+       // test_remove_elements_different_keys();
+        test_remove_elements_same_keys();
 }
 
 /* Tests the speed of a table using random numbers. First a number of
@@ -723,7 +724,7 @@ int main(int argc,char **argv)
         correctnessTest();
         printf("All correctness tests succeeded!\n\n");
         /*getchar();*/
-      //  speedTest(n);
+        speedTest(n);
         printf("Test completed.\n");
         return 0;
 }
