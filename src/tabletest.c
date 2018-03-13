@@ -650,14 +650,14 @@ void test_remove_elements_same_keys()
  */
 void correctnessTest()
 {
-       // test_isempty();
-       // test_insert_single_element();
+        //test_isempty();
+        //test_insert_single_element();
         //test_lookup_single_element();
-       // test_insert_lookup_different_keys();
-       // test_insert_lookup_same_keys();
-       // test_remove_single_element();
-       // test_remove_elements_different_keys();
-        test_remove_elements_same_keys();
+        //test_insert_lookup_different_keys();
+        //test_insert_lookup_same_keys();
+        //test_remove_single_element();
+        test_remove_elements_different_keys();
+       ///test_remove_elements_same_keys();
 }
 
 /* Tests the speed of a table using random numbers. First a number of

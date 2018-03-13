@@ -81,7 +81,7 @@ void table_insert(table *t, void *key, void *value)
 
 	table *tablePointer = (table*)t;
 	//Value who will changed through the array
-	table_entry *checkElement = malloc(sizeof(table_entry));
+	table_entry *checkElement;// = malloc(sizeof(table_entry));
 
 	table_entry *insertElement = malloc(sizeof(table_entry));
 
@@ -91,13 +91,13 @@ void table_insert(table *t, void *key, void *value)
 
 
 	bool inserted = false;
-	int index = 0;	//Used as index.
+	int index = 0;
 	//If table is empty indexust pick the first slot in it.
 	if(table_is_empty(tablePointer) == true){
 		//insert first slot of the array.
 		array_1d_set_value(tablePointer->entries,insertElement,tablePointer->freeIndex);
 		checkElement = array_1d_inspect_value(tablePointer->entries, index);
-		printf("Inserted %s %s at index %d\n", checkElement->key, checkElement->value, index);
+		printf("Inserted %s %s at index %d\n", insertElement->key, insertElement->value, index);
 		inserted = true;					//Used to exit loop and function.
 		tablePointer->freeIndex++;	//Update inserted slots of array.
 	}
@@ -108,17 +108,13 @@ void table_insert(table *t, void *key, void *value)
 		checkElement = array_1d_inspect_value(tablePointer->entries, index);
 		if(tablePointer->key_cmp_func(checkElement->key, key) == 0){	//See if key match
 			array_1d_set_value(tablePointer->entries,insertElement,index);
-			tablePointer->freeIndex++;	//Update inserted slots of array.
 			checkElement = array_1d_inspect_value(tablePointer->entries, index);
-
 			printf("Inserted %s %s at index %d\n", checkElement->key, checkElement->value, index);
 			inserted = true;		//Used to exit loop and function.
 		}
 		index++;	//Check next index of array.
 	}
 	//If Key do not exist put it to next available slot.
-
-
 	if(inserted == false){
 		array_1d_set_value(tablePointer->entries,insertElement,tablePointer->freeIndex);
 		checkElement = array_1d_inspect_value(tablePointer->entries, index);
@@ -139,17 +135,13 @@ void table_insert(table *t, void *key, void *value)
 void *table_lookup(const table *t, const void *key)
 {
 	printf("Looking up %s\n", key);
-	table_entry *checkElement = malloc(sizeof(table_entry));
+	table_entry *checkElement;// = malloc(sizeof(table_entry));
 	table *tablePointer = (table*)t;
 	int index = array_1d_low(t->entries);
-	printf("%d\n", array_1d_has_value(tablePointer->entries,index));
 	//Traverse through all values to see if key exist, then replace if it does.
 	while(array_1d_has_value(tablePointer->entries,index)){
-		printf("inside while\n");
 		//Look att current slot of array
 		checkElement = array_1d_inspect_value(tablePointer->entries, index);
-		printf("looked up element %s %s\n", checkElement->key, checkElement->value);
-
 		//		checkElement->key == key //Implementera key-compare.
 		if(tablePointer->key_cmp_func(checkElement->key, key) == 0){	//Implementera key-compare.
 			return checkElement->value;
@@ -171,44 +163,20 @@ void *table_lookup(const table *t, const void *key)
  */
 void table_remove(table *t, const void *key)
 {
-	/*
-	 		// Compare the supplied key with the key of this entry.
-		if (t->key_cmp_func(entry->key, key) == 0) {
-			// If we have a match, call free on the key
-			// and/or value if given the responsiblity
-			if (t->key_free_func != NULL) {
-				t->key_free_func(entry->key);
-			}
-			if (t->value_free_func != NULL) {
-				t->value_free_func(entry->value);
-			}
-			// Remove the list element itself.
-			pos = dlist_remove(t->entries, pos);
-	 */
-
-	//Traverse to find key, if key find, remove it.
-	//Maybe it is not freed, might need to check valgrind about that.
-
-	//After element has been removed, take the last element of array
-	//(if there is one) and move it to the slot the removed element used to be).
-
-	table_entry *checkElement = malloc(sizeof(table_entry));
+	table_entry *checkElement;
 	table_entry *moveElement = malloc(sizeof(table_entry));
-	table_entry *removeElement = malloc(sizeof(table_entry));
-
-
-
 	table *tablePointer = (table*)t;
 	int index = array_1d_low(t->entries);
 	int removedIndex;
-	//Traverse through all values to see if key exist, then replace if it does.
 	bool removed = false;
+	//Traverse through all values to see if key exist, then replace if it does.
 	while(array_1d_has_value(tablePointer->entries,index && removed == false)){
-		//Look att current slot of array
-		checkElement = array_1d_inspect_value(tablePointer->entries, index);
-		//		checkElement->key == key //Implementera key-compare.
-		if(tablePointer->key_cmp_func(checkElement->key, key) == 0){	//Implementera key-compare.
-			printf("Removing %s %s at index %d\n", checkElement->key, checkElement->value, index);			if (t->key_free_func != NULL) {
+		printf("index = %d\n", index);
+		checkElement = array_1d_inspect_value(tablePointer->entries, index);	//Current slot
+		printf("checkElement -> %s\n", checkElement->key);
+		if(tablePointer->key_cmp_func(checkElement->key, key) == 0){	//Key match?
+			printf("Removing %s %s at index %d\n", checkElement->key, checkElement->value, index);
+			if (t->key_free_func != NULL) {
 				t->key_free_func(checkElement->key);
 			}
 			if (t->value_free_func != NULL) {
@@ -216,15 +184,21 @@ void table_remove(table *t, const void *key)
 			}
 			array_1d_set_value(tablePointer->entries,NULL,index);
 			removedIndex = index;
+			tablePointer->freeIndex--;
 			removed = true;
 		}
 		index++;
 	}
-	if(removed && tablePointer->freeIndex != removedIndex){	//Move last element of array to removed index.
-		checkElement = array_1d_inspect_value(tablePointer->entries, 1);
-		printf("Element we want to move is %s %s\n", checkElement->key, checkElement->value);
+	if(removed && tablePointer->freeIndex != removedIndex){		//Move last element of array to removed index.
 
-		tablePointer->freeIndex--;
+		checkElement = array_1d_inspect_value(tablePointer->entries, tablePointer->freeIndex);
+		//Copy the element at the end of the array to the index where the removed element used to be.
+		moveElement->key = checkElement->key;
+		moveElement->value = checkElement->value;
+		array_1d_set_value(tablePointer->entries,moveElement,removedIndex);
+
+		//Remove element at the end of the array.
+		array_1d_set_value(tablePointer->entries,NULL,tablePointer->freeIndex);
 	}
 }
 
