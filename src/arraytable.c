@@ -81,7 +81,7 @@ void table_insert(table *t, void *key, void *value)
 
 	table *tablePointer = (table*)t;
 	//Value who will changed through the array
-	table_entry *checkElement;// = malloc(sizeof(table_entry));
+	table_entry *checkElement = malloc(sizeof(table_entry));
 
 	table_entry *insertElement = malloc(sizeof(table_entry));
 
@@ -134,7 +134,7 @@ void table_insert(table *t, void *key, void *value)
  */
 void *table_lookup(const table *t, const void *key)
 {
-	table_entry *checkElement;// = malloc(sizeof(table_entry));
+	table_entry *checkElement = malloc(sizeof(table_entry));
 	table *tablePointer = (table*)t;
 	int index = array_1d_low(t->entries);
 	//Traverse through all values to see if key exist, then replace if it does.
@@ -163,7 +163,7 @@ void *table_lookup(const table *t, const void *key)
  */
 void table_remove(table *t, const void *key)
 {
-	/*
+
 	table_entry *checkElement;
 	table_entry *moveElement = malloc(sizeof(table_entry));
 	table *tablePointer = (table*)t;
@@ -203,7 +203,7 @@ void table_remove(table *t, const void *key)
 		array_1d_set_value(tablePointer->entries,NULL,tablePointer->nextIndexAvailable);
 
 	}
-	*/
+
 }
 
 /*
@@ -223,13 +223,10 @@ void table_kill(table *t)
 	table_entry *checkElement;
 	//iterate through array.
 	for(int i = array_1d_low(t->entries); i <= array_1d_high(t->entries); i++){
-			printf("%d\n", i);
+		//	printf("%d\n", i);
 			checkElement = array_1d_inspect_value(tablePointer->entries, i);
-			printf("%s %s\n", (char*)checkElement->key, (char*)checkElement->value);
+			//printf("%s %s\n", (char*)checkElement->key, (char*)checkElement->value);
 	}
-
-
-
 }
 
 void table_print(const table *t, inspect_callback_pair print_func)

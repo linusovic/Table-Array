@@ -656,7 +656,7 @@ void correctnessTest()
         test_insert_lookup_different_keys();
         test_insert_lookup_same_keys();
         test_remove_single_element();
-      //  test_remove_elements_different_keys();
+        test_remove_elements_different_keys();
        ///test_remove_elements_same_keys();
 }
 
