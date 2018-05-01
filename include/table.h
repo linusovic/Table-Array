@@ -120,6 +120,6 @@ void table_kill(table *t);
  *
  * Returns: Nothing.
  */
-void table_print(const table *t, inspect_callback_pair print_func);
+void table_print(const table *t);
 
 #endif

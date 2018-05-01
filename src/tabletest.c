@@ -318,6 +318,7 @@ void get_remove_speed(table *t, int *keys, int n)
         printf("%lu ms.\n" ,end-start);
 }
 
+
 /* Tests if isempty returns true directly after a table is created.
  */
 void test_isempty(){
@@ -606,13 +607,13 @@ void test_remove_elements_same_keys()
          * is undefined if the same pointer is used multiple times.
          * Memhandler will break things in that case. */
         char *key11 = copy_string(key1);
-        char *key21 = copy_string(key2);
-        char *key22 = copy_string(key2);
+        char *key21 = copy_string(key2); //lost
+        char *key22 = copy_string(key2); //lost
         char *key23 = copy_string(key2);
 
         char *value11 = copy_string("value11");
-        char *value21 = copy_string("value21");
-        char *value22 = copy_string("value22");
+        char *value21 = copy_string("value21"); //lost
+        char *value22 = copy_string("value22"); //lost
         char *value23 = copy_string("value23");
 
         /* Insert triplicates and verify that each new value indeed
@@ -650,7 +651,7 @@ void test_remove_elements_same_keys()
  */
 void correctnessTest()
 {
-        test_isempty();
+		test_isempty();
         test_insert_single_element();
         test_lookup_single_element();
         test_insert_lookup_different_keys();
@@ -724,7 +725,7 @@ int main(int argc,char **argv)
         correctnessTest();
         printf("All correctness tests succeeded!\n\n");
         /*getchar();*/
-        speedTest(n);
+      //  speedTest(n);
         printf("Test completed.\n");
         return 0;
 }
