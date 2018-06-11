@@ -722,10 +722,10 @@ int main(int argc,char **argv)
                         "allowed range 1-%d.\n",n,TABLESIZE);
                 exit(EXIT_FAILURE);
         }
-        correctnessTest();
+//        correctnessTest();
         printf("All correctness tests succeeded!\n\n");
         /*getchar();*/
-      //  speedTest(n);
+        speedTest(n);
         printf("Test completed.\n");
         return 0;
 }
