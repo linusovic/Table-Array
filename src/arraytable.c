@@ -32,7 +32,9 @@ typedef struct table_entry {
  *                     parameter is smaller than the right parameter, 0 if
  *                     the parameters are equal, and >0 if the left
  *                     parameter is larger than the right item.
- * Returns: A pointer to the table. NULL if creation of the table failed. */
+ * Returns: A pointer to the table. NULL if creation of the table failed.
+ * Simplified asymptotic complexity analysis : O(1)
+ * */
 table *table_empty(compare_function *key_cmp_func,
 		   free_function key_free_func,
 		   free_function value_free_func)
@@ -55,6 +57,8 @@ table *table_empty(compare_function *key_cmp_func,
  * @table: Table to check.
  *
  * Return: True if table contains no key/value pairs, false otherwise.
+ * Simplified asymptotic complexity analysis : O(1)
+ *
  */
 bool table_is_empty(const table *t)
 {
@@ -79,6 +83,7 @@ bool table_is_empty(const table *t)
  * duplicates for a given key.
  *
  * Returns: Nothing.
+ * Simplified asymptotic complexity analysis : O(n)
  */
 void table_insert(table *t, void *key, void *value)
 {
@@ -115,10 +120,10 @@ void table_insert(table *t, void *key, void *value)
 	}
 
 	//Traverse through all values to see if key exist, then replace if it does.
-	while(array_1d_has_value(tablePointer->entries,index) && inserted == false){ //invalid read
-		//Look att current slot of array
-		checkElement = array_1d_inspect_value(tablePointer->entries, index); //invalid read
-		if(tablePointer->key_cmp_func(checkElement->key, key) == 0){	//See if key match, invalid read
+	while(array_1d_has_value(tablePointer->entries,index) && inserted == false){
+		//Look at current slot of array
+		checkElement = array_1d_inspect_value(tablePointer->entries, index);
+		if(tablePointer->key_cmp_func(checkElement->key, key) == 0){	//See if key match
 			//Remove whatever is there to avoid memory-leak.
 			if (t->key_free_func != NULL) {
 				t->key_free_func(checkElement->key);
@@ -150,6 +155,7 @@ void table_insert(table *t, void *key, void *value)
  * Return: The value corresponding to a given key, or NULL if the key
  * is not found in the table. If the table contains duplicate keys,
  * the value that was latest inserted will be returned.
+ * Simplified asymptotic complexity analysis : O(n)
  */
 void *table_lookup(const table *t, const void *key)
 {
@@ -180,6 +186,7 @@ void *table_lookup(const table *t, const void *key)
  * the table.
  *
  * Returns: Nothing.
+ * Simplified asymptotic complexity analysis : O(n)
  */
 void table_remove(table *t, const void *key)
 {
@@ -210,7 +217,7 @@ void table_remove(table *t, const void *key)
 		index++;	//Check next index.
 	}
 	//Move last element of array to removed index to make sure there are no "holes" in the array.
-	//Unless the removed element was the last element in the array.
+	//Don't if removed element was the last element in the array.
 	if(removed && tablePointer->nextIndexAvailable != removedIndex){
 		checkElement = array_1d_inspect_value(tablePointer->entries, tablePointer->nextIndexAvailable);
 		//Copy the element at the end of the array to the index where the removed element used to be.
@@ -235,6 +242,7 @@ void table_remove(table *t, const void *key)
  * occupied by the element values.
  *
  * Returns: Nothing.
+ * Simplified asymptotic complexity analysis : O(n)
  */
 void table_kill(table *t)
 {
