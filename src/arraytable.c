@@ -8,7 +8,7 @@
 #include "array_1d.h"
 
 
-#define ARRAYSIZE 40000	//Make sure this syncs with test sample-size.
+#define ARRAYSIZE 40000	//Needs to be the same as TABLESIZE in tabletest.c
 
 
 typedef struct table {
